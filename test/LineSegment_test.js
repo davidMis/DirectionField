@@ -33,23 +33,13 @@ describe("LineSegment", function() {
         });
     });
 
-    describe("withSlope()", function() {
-        it("should set theta to 0 when slope is 0", function() {
-            var ls = new LineSegment();
-            ls.theta = 1;
-
-            ls.withSlope(0);
-
-            expect(ls.theta).to.eql(0);
+    describe("LineSegment.thetaFromSlope()", function() {
+        it("should return theta 0 when slope is 0", function() {
+            expect(LineSegment.thetaFromSlope(0)).to.eql(0);
         });
 
-        it("should set theta to PI/4 when slope is 1", function() {
-            var ls = new LineSegment();
-            ls.theta = 1;
-
-            ls.withSlope(1);
-
-            expect(ls.theta).to.eql(Math.PI / 4);
+        it("should return theta PI/4 when slope is 1", function() {
+            expect(LineSegment.thetaFromSlope(1)).to.eql(Math.PI / 4);
         });
     });
 });

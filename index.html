@@ -15,11 +15,7 @@
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
     
-    let ls = new LineSegment();
-    ls.point = [2,3];
-    ls.pointDefines = "center";
-    ls.withSlope(3/2);
-    ls.length = 4;
+    let ls = new LineSegment().withCenter([2,3]).withSlope(3/2).withLength(1);
 
     viz.addLineSegment(ls);
 

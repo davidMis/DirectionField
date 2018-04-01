@@ -6,9 +6,25 @@ class LineSegment {
         this.pointDefines = "start"; 
     }
 
-    // converts the slope given to an appropriate theta
+    withCenter(point) {
+        this.pointDefines = "center";
+        this.point = point;
+        return this;
+    }
+
     withSlope(m) {
-        this.theta = Math.atan(m);
+        this.theta = LineSegment.thetaFromSlope(m);
+        return this;
+    }
+
+    withTheta(theta) {
+        this.theta = theta;
+        return this;
+    }
+
+    withLength(length) {
+        this.length = length;
+        return this;
     }
 
     // returns endpoints [[x1,y1], [x2,y2]] in the graph's space
@@ -28,4 +44,9 @@ class LineSegment {
             throw new Error("UNIMPLEMENTED");
         }
     }
+}
+
+// converts the slope given to an appropriate theta
+LineSegment.thetaFromSlope = function(m) {
+    return Math.atan(m);
 }
