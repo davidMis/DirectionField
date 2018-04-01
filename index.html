@@ -1,0 +1,19 @@
+<!Doctype html>
+<html>
+
+<head>
+    <title>Direction Field Example</title>
+    <script src="src/Viz.js"></script>
+</head>
+
+<body>
+    <div id="container" style="width: 400px; height: 400px"></div>
+</body>
+
+<script>
+    var viz = new Viz(document.getElementById("container"), 400, 400);
+    viz.shouldDrawAxes = true;
+    viz.refresh();
+</script>
+
+</html>
