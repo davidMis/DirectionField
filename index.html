@@ -4,6 +4,7 @@
 <head>
     <title>Direction Field Example</title>
     <script src="src/Viz.js"></script>
+    <script src="src/LineSegment.js"></script>
 </head>
 
 <body>
@@ -13,6 +14,15 @@
 <script>
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
+    
+    let ls = new LineSegment();
+    ls.point = [2,3];
+    ls.pointDefines = "center";
+    ls.withSlope(3/2);
+    ls.length = 4;
+
+    viz.addLineSegment(ls);
+
     viz.refresh();
 </script>
 

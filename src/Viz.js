@@ -19,6 +19,7 @@ class Viz {
         this.maxY = 10;
         this.minX = -10;
         this.maxX = 10;
+        this.lineSegments = [];
     }
 
     getWidth() {
@@ -27,6 +28,10 @@ class Viz {
 
     getHeight() {
         return this.node.height;
+    }
+
+    addLineSegment(ls) {
+        this.lineSegments.push(ls);
     }
 
     refresh() {
@@ -46,28 +51,36 @@ class Viz {
         var ctx = this.node.getContext("2d");
         
         // Draw X axis
-        ctx.beginPath();
-        ctx.moveTo.apply(ctx, this.scaledPos(this.minX, 0));
-        ctx.lineTo.apply(ctx, this.scaledPos(this.maxX, 0));
-        ctx.stroke();
+        this.drawLine(this.scaledPos(this.minX, 0), this.scaledPos(this.maxX, 0));
 
         // Draw Y axis
+        this.drawLine(this.scaledPos(0, this.minY), this.scaledPos(0, this.maxY));
+
+        // Draw line segments
+        for (let ls of this.lineSegments) {
+            let endpoints = ls.endpoints();
+            this.drawLine(
+                this.scaledPos.apply(this, endpoints[0]), 
+                this.scaledPos.apply(this, endpoints[1]), 
+            );
+        }
+    }
+
+    // draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space
+    drawLine(pt1, pt2) {
+        var ctx = this.node.getContext("2d");
+
         ctx.beginPath();
-        ctx.moveTo.apply(ctx, this.scaledPos(0, this.minY));
-        ctx.lineTo.apply(ctx, this.scaledPos(0, this.maxY));
+        ctx.moveTo.apply(ctx, pt1);
+        ctx.lineTo.apply(ctx, pt2);
         ctx.stroke();
     }
 
     // takes an x, y in the graph space and returns [x, y] in the canvas's space
     scaledPos(x, y) {
         return [
-            (x - this.minX) / (this.maxX - this.minX) * this.getWidth(), 
+            (x - this.minX) / (this.maxX - this.minX) * this.getWidth(),
             (this.maxY - y) / (this.maxY - this.minY) * this.getHeight()
         ];
     }
 }
-
-// tests: 
-// - axes centered
-// - axes offset x
-// - axes offset y
