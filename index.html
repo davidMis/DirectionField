@@ -15,9 +15,32 @@
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
     
-    let ls = new LineSegment().withCenter([2,3]).withSlope(3/2).withLength(1);
+    // var FPrime = (x, y) => x + y
+    var FPrime = (x, y) => 2 * (y - 1) / x
+    // var FPrime = (x, y) => 2 * x; 
+    // var FPrime = (x, y) => 2 * y / x; 
+    // var FPrime = (x, y) => (x - y) / (x + y);
 
-    viz.addLineSegment(ls);
+    // TODO
+    // Showing integral curve
+    // Calculating singular points
+    // Show line when cursor hovers over
+    // Show integral curve when clicking on a point
+
+    for (let x = Math.floor(viz.minX); x < viz.maxX; x++) {
+        for(let y = Math.floor(viz.minY); y < viz.maxY; y++) {
+            var slope = FPrime(x,y)
+            
+            // Don't graph when the derivative is not defined 
+            if (isFinite(slope)) {
+                let ls = new LineSegment()
+                .withCenter([x,y])
+                .withSlope(slope)
+                .withLength(1);
+                viz.addLineSegment(ls);
+            }
+        }
+    }
 
     viz.refresh();
 </script>

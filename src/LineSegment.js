@@ -30,6 +30,10 @@ class LineSegment {
     // returns endpoints [[x1,y1], [x2,y2]] in the graph's space
     // TODO: Is it cleaner to make this polymorphic?
     endpoints() {
+        if (isNaN(this.theta)) {
+            console.log("NaN for " + this.point);
+        }
+
         if (this.pointDefines == "start") {
             throw new Error("UNIMPLEMENTED");
         } else if (this.pointDefines == "center") {
