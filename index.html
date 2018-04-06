@@ -5,44 +5,69 @@
     <title>Direction Field Example</title>
     <script src="src/Viz.js"></script>
     <script src="src/LineSegment.js"></script>
+
+    <style>
+        .parent {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap-reverse;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="container" style="width: 400px; height: 400px"></div>
+    <div class="parent">
+        <div id="container" style="width: 400px; height: 400px"></div>
+        <div id="controls">
+            <div>F'(x,y)=<input id="FPrime" type="text" value="(x - y) / (x + y)"/></div>
+            <div><button onClick="handleGraphButtonClick()">Graph it!</button></div>
+        </div>
+    </div>
 </body>
 
 <script>
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
     
+    function handleGraphButtonClick() {
+        viz.reset();
+
+        let fprimeStr = document.getElementById("FPrime").value;
+        let fprime = eval("(x,y) => " + fprimeStr);
+
+        for (let x = Math.floor(viz.minX); x < viz.maxX; x++) {
+            for(let y = Math.floor(viz.minY); y < viz.maxY; y++) {
+                var slope = fprime(x,y)
+                
+                // Don't graph when the derivative is not defined 
+                if (isFinite(slope)) {
+                    let ls = new LineSegment()
+                    .withCenter([x,y])
+                    .withSlope(slope)
+                    .withLength(1);
+                    viz.addLineSegment(ls);
+                }
+            }
+        }
+
+        viz.refresh();
+    }
+
+    // initialize
+    handleGraphButtonClick();
+
     // var FPrime = (x, y) => x + y
-    var FPrime = (x, y) => 2 * (y - 1) / x
+    // var FPrime = (x, y) => 2 * (y - 1) / x
     // var FPrime = (x, y) => 2 * x; 
     // var FPrime = (x, y) => 2 * y / x; 
     // var FPrime = (x, y) => (x - y) / (x + y);
 
     // TODO
     // Showing integral curve
+    // Showing isoclines?
     // Calculating singular points
     // Show line when cursor hovers over
-    // Show integral curve when clicking on a point
-
-    for (let x = Math.floor(viz.minX); x < viz.maxX; x++) {
-        for(let y = Math.floor(viz.minY); y < viz.maxY; y++) {
-            var slope = FPrime(x,y)
-            
-            // Don't graph when the derivative is not defined 
-            if (isFinite(slope)) {
-                let ls = new LineSegment()
-                .withCenter([x,y])
-                .withSlope(slope)
-                .withLength(1);
-                viz.addLineSegment(ls);
-            }
-        }
-    }
-
-    viz.refresh();
+    // Show integral curve when hovering over
 </script>
 
 </html>

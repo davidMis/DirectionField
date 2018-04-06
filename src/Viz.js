@@ -34,6 +34,10 @@ class Viz {
         this.lineSegments.push(ls);
     }
 
+    reset() {
+        this.lineSegments = [];
+    }
+
     refresh() {
         this.clear();
 
