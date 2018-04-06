@@ -5,6 +5,7 @@
     <title>Direction Field Example</title>
     <script src="src/Viz.js"></script>
     <script src="src/LineSegment.js"></script>
+    <script src="src/Circle.js"></script>
 
     <style>
         .parent {
@@ -28,6 +29,26 @@
 <script>
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
+
+    var c;
+    viz.setOnMousemove(function(x, y) {
+        if (c != null) {
+            viz.removeShape(c);
+        }
+
+        c = new Circle()
+            .withCenter([x, y])
+            .withRadius(10);
+        viz.addShape(c);
+        viz.refresh();
+    });
+    viz.setOnMouseleave(function() {
+        console.log("leave!");
+        if (c != null) {
+            viz.removeShape(c);
+            viz.refresh();
+        }
+    });
     
     function handleGraphButtonClick() {
         viz.reset();
@@ -45,7 +66,7 @@
                     .withCenter([x,y])
                     .withSlope(slope)
                     .withLength(1);
-                    viz.addLineSegment(ls);
+                    viz.addShape(ls);
                 }
             }
         }
@@ -66,7 +87,6 @@
     // Showing integral curve
     // Showing isoclines?
     // Calculating singular points
-    // Show line when cursor hovers over
     // Show integral curve when hovering over
 </script>
 

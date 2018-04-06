@@ -48,6 +48,14 @@ class LineSegment {
             throw new Error("UNIMPLEMENTED");
         }
     }
+
+    draw(viz) {
+        let endpoints = this.endpoints();
+        viz.drawLine(
+            viz.scaleToCanvas.apply(viz, endpoints[0]), 
+            viz.scaleToCanvas.apply(viz, endpoints[1]), 
+        );
+    }
 }
 
 // converts the slope given to an appropriate theta

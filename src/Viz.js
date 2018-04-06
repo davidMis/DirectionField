@@ -19,7 +19,7 @@ class Viz {
         this.maxY = 10;
         this.minX = -10;
         this.maxX = 10;
-        this.lineSegments = [];
+        this.shapes = [];
     }
 
     getWidth() {
@@ -30,12 +30,16 @@ class Viz {
         return this.node.height;
     }
 
-    addLineSegment(ls) {
-        this.lineSegments.push(ls);
+    addShape(s) {
+        this.shapes.push(s);
+    }
+
+    removeShape(s) {
+        this.shapes = this.shapes.filter(e => e != s);
     }
 
     reset() {
-        this.lineSegments = [];
+        this.shapes = [];
     }
 
     refresh() {
@@ -43,6 +47,11 @@ class Viz {
 
         if (this.shouldDrawAxes) {
             this.drawAxes();
+        }
+
+        // Draw shapes
+        for (let s of this.shapes) {
+            s.draw(this);
         }
     }
 
@@ -55,19 +64,10 @@ class Viz {
         var ctx = this.node.getContext("2d");
         
         // Draw X axis
-        this.drawLine(this.scaledPos(this.minX, 0), this.scaledPos(this.maxX, 0));
+        this.drawLine(this.scaleToCanvas(this.minX, 0), this.scaleToCanvas(this.maxX, 0));
 
         // Draw Y axis
-        this.drawLine(this.scaledPos(0, this.minY), this.scaledPos(0, this.maxY));
-
-        // Draw line segments
-        for (let ls of this.lineSegments) {
-            let endpoints = ls.endpoints();
-            this.drawLine(
-                this.scaledPos.apply(this, endpoints[0]), 
-                this.scaledPos.apply(this, endpoints[1]), 
-            );
-        }
+        this.drawLine(this.scaleToCanvas(0, this.minY), this.scaleToCanvas(0, this.maxY));
     }
 
     // draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space
@@ -80,11 +80,42 @@ class Viz {
         ctx.stroke();
     }
 
+    // draws a circle centered at [x, y] w/ radius r. Coordinates are in the canvas space.
+    drawCircle(pt, r) {
+        var ctx = this.node.getContext("2d");
+
+        ctx.beginPath();
+        ctx.arc(pt[0], pt[1], r, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
     // takes an x, y in the graph space and returns [x, y] in the canvas's space
-    scaledPos(x, y) {
+    scaleToCanvas(x, y) {
         return [
             (x - this.minX) / (this.maxX - this.minX) * this.getWidth(),
             (this.maxY - y) / (this.maxY - this.minY) * this.getHeight()
         ];
+    }
+
+    // takes an x, y in the canvas space and returns [x, y] in the graph space
+    scaleToGraph(x, y) {
+        return [
+            x * (this.maxX - this.minX) / this.getWidth() + this.minX, 
+            -y * (this.maxY - this.minY) / this.getHeight() + this.maxY, 
+        ];
+    }
+
+    // f is a function that is invoked with x, y in the graph space
+    setOnMousemove(f) {
+        this.node.onmousemove = (e) => {
+            f.apply(null, this.scaleToGraph(e.offsetX, e.offsetY))
+        };
+    }
+
+    // f is a function that is invoked without any arguments.
+    setOnMouseleave(f) {
+        this.node.onmouseleave = (e) => {
+            f();
+        };
     }
 }
