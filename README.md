@@ -3,13 +3,13 @@
 This is a toy direction field viewer based on Lesson 5 of 
 "Ordinary Differential Equations" by Tenenbaum and Pollard.
 
-You can play around with it here: https://davidmis.github.io/DirectionField/
+You can play around with it here: https://davidmis.github.io/DirectionField
 
-You can read more about it in [this blog post](https://davimis.com/TODO).
+Or if you want, you can read more about it in [this blog post](https://davimis.com/TODO).
 
 ## What can I use it for?
 
-Playing with differential equations! Other than that -- probably nothing. It's just for fun. 
+Playing with differential equations! Other than that, probably nothing. It's just for fun. 
 
 If you are looking for a general-purpose in-browser graphing tool, try D3.js.
 
