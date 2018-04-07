@@ -1,3 +1,5 @@
+const Viz = require("../src/Viz.js");
+
 describe("Viz", function() {
     it("should pass this canary test", function() {
         expect(true).to.be.true;
@@ -33,7 +35,7 @@ describe("Viz", function() {
         });
     });
 
-    describe("scaledPos", function() {
+    describe("scaleToCanvas", function() {
         it("should set the center correctly", function() {
             var node = document.createElement("div");
 
@@ -43,7 +45,7 @@ describe("Viz", function() {
             viz.minY = -10;
             viz.maxY = 10;
 
-            expect(viz.scaledPos(0,0)).to.eql([100,100])
+            expect(viz.scaleToCanvas([0,0])).to.eql([100,100])
         });
 
         it("should set the center correctly", function() {
@@ -55,7 +57,7 @@ describe("Viz", function() {
             viz.minY = -10;
             viz.maxY = 10;
 
-            expect(viz.scaledPos(0,0)).to.eql([5,5])
+            expect(viz.scaleToCanvas([0,0])).to.eql([5,5])
         });
     });
 });

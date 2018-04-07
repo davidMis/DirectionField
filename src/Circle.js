@@ -1,3 +1,5 @@
+const Shape = require("./Shape.js");
+
 class Circle extends Shape {
     constructor() {
         super();
@@ -20,8 +22,10 @@ class Circle extends Shape {
         viz.setColor(this.color);
 
         viz.drawCircle(
-            viz.scaleToCanvas.apply(viz, this.center), 
-            this.radius, 
+            viz.scaleToCanvas(this.center), 
+            this.radius
         );
     }
 }
+
+module.exports = Circle;

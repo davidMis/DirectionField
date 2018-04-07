@@ -3,11 +3,7 @@
 
 <head>
     <title>Direction Field Example</title>
-    <script src="src/Viz.js"></script>
-    <script src="src/Shape.js"></script>
-    <script src="src/LineSegment.js"></script>
-    <script src="src/Circle.js"></script>
-    <script src="src/LinearApproximation.js"></script>
+    <script src="bundle.js"></script>
 
     <style>
         .parent {
@@ -22,7 +18,7 @@
     <div class="parent">
         <div id="container" style="width: 400px; height: 400px"></div>
         <div id="controls">
-            <div>F'(x,y)=<input id="FPrime" type="text" value="Math.sin(x) + y*x/20"/></div>
+            <div>F'(x,y)=<input id="FPrime" type="text" value="Math.sin(x) + y"/></div>
             <div><button onClick="handleGraphButtonClick()">Graph it!</button></div>
         </div>
     </div>
@@ -31,7 +27,8 @@
 <script>
     function getFPrime() {
         var fprimeStr = document.getElementById("FPrime").value;
-        return eval("(x,y) => " + fprimeStr);
+        var functionStr = "(pt) => { let x = pt[0], y = pt[1]; return (" + fprimeStr + "); }";
+        return eval(functionStr);
     }
     var fPrime = getFPrime();
 
@@ -39,14 +36,14 @@
     viz.shouldDrawAxes = true;
 
     var la;
-    viz.setOnMousemove(function(x, y) {
+    viz.setOnMousemove(function(pt) {
         if (la != null) {
             viz.removeShape(la);
         }
 
         la = new LinearApproximation()
             .withColor("red")
-            .withPoint([x, y])
+            .withPoint(pt)
             .withFPrime(fPrime);
         viz.addShape(la);
         viz.refresh();
@@ -65,14 +62,14 @@
 
         for (let x = Math.floor(viz.minX); x < viz.maxX; x++) {
             for(let y = Math.floor(viz.minY); y < viz.maxY; y++) {
-                var slope = fPrime(x,y)
+                var slope = fPrime([x,y])
                 
                 // Don't graph when the derivative is not defined 
                 if (isFinite(slope)) {
                     let ls = new LineSegment()
-                    .withCenter([x,y])
-                    .withSlope(slope)
-                    .withLength(1);
+                        .withCenter([x,y])
+                        .withSlope(slope)
+                        .withLength(1);
                     viz.addShape(ls);
                 }
             }

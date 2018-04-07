@@ -1,3 +1,5 @@
+const Shape = require("./Shape.js");
+
 class LineSegment extends Shape {
     constructor() {
         super();
@@ -53,11 +55,11 @@ class LineSegment extends Shape {
 
     draw(viz) {
         viz.setColor(this.color);
-        
+
         let endpoints = this.endpoints();
         viz.drawLine(
-            viz.scaleToCanvas.apply(viz, endpoints[0]), 
-            viz.scaleToCanvas.apply(viz, endpoints[1]), 
+            viz.scaleToCanvas(endpoints[0]), 
+            viz.scaleToCanvas(endpoints[1])
         );
     }
 }
@@ -66,3 +68,5 @@ class LineSegment extends Shape {
 LineSegment.thetaFromSlope = function(m) {
     return Math.atan(m);
 }
+
+module.exports = LineSegment;

@@ -66,10 +66,16 @@ class Viz {
         var ctx = this.node.getContext("2d");
         
         // Draw X axis
-        this.drawLine(this.scaleToCanvas(this.minX, 0), this.scaleToCanvas(this.maxX, 0));
+        this.drawLine(
+            this.scaleToCanvas([this.minX, 0]), 
+            this.scaleToCanvas([this.maxX, 0])
+        );
 
         // Draw Y axis
-        this.drawLine(this.scaleToCanvas(0, this.minY), this.scaleToCanvas(0, this.maxY));
+        this.drawLine(
+            this.scaleToCanvas([0, this.minY]), 
+            this.scaleToCanvas([0, this.maxY])
+        );
     }
 
     // draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space
@@ -97,16 +103,22 @@ class Viz {
         ctx.fillStyle = color;
     }
 
-    // takes an x, y in the graph space and returns [x, y] in the canvas's space
-    scaleToCanvas(x, y) {
+    // takes an [x, y] in the graph space and returns [x, y] in the canvas's space
+    scaleToCanvas(pt) {
+        const x = pt[0]
+        const y = pt[1];
+
         return [
             (x - this.minX) / (this.maxX - this.minX) * this.getWidth(),
             (this.maxY - y) / (this.maxY - this.minY) * this.getHeight()
         ];
     }
 
-    // takes an x, y in the canvas space and returns [x, y] in the graph space
-    scaleToGraph(x, y) {
+    // takes an [x, y] in the canvas space and returns [x, y] in the graph space
+    scaleToGraph(pt) {
+        const x = pt[0]
+        const y = pt[1];
+
         return [
             x * (this.maxX - this.minX) / this.getWidth() + this.minX, 
             -y * (this.maxY - this.minY) / this.getHeight() + this.maxY, 
@@ -115,15 +127,13 @@ class Viz {
 
     // f is a function that is invoked with x, y in the graph space
     setOnMousemove(f) {
-        this.node.onmousemove = (e) => {
-            f.apply(null, this.scaleToGraph(e.offsetX, e.offsetY))
-        };
+        this.node.onmousemove = (e) => f(this.scaleToGraph([e.offsetX, e.offsetY]));
     }
 
     // f is a function that is invoked without any arguments.
     setOnMouseleave(f) {
-        this.node.onmouseleave = (e) => {
-            f();
-        };
+        this.node.onmouseleave = (e) => f();
     }
 }
+
+module.exports = Viz;

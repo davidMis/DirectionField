@@ -8,3 +8,5 @@ class Shape {
         return this;
     }
 }
+
+module.exports = Shape;

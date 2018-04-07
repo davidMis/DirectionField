@@ -1,10 +1,12 @@
+const Shape = require("./Shape.js");
+
 class LinearApproximation extends Shape {
     constructor() {
         super();
 
         this.point = [0, 0];
         this.xDelta = 0.01;
-        this.fPrime = (x, y) => 0;
+        this.fPrime = (pt) => 0;
     }
 
     withPoint(point) {
@@ -33,11 +35,11 @@ class LinearApproximation extends Shape {
         y0 = this.point[1];
         while (x0 < viz.maxX) {
             x1 = x0 + this.xDelta;
-            y1 = y0 + this.xDelta * this.fPrime(x0, y0);
+            y1 = y0 + this.xDelta * this.fPrime([x0, y0]);
             
             viz.drawLine(
-                viz.scaleToCanvas(x0, y0), 
-                viz.scaleToCanvas(x1, y1), 
+                viz.scaleToCanvas([x0, y0]), 
+                viz.scaleToCanvas([x1, y1]) 
             );
 
             x0 = x1;
@@ -49,11 +51,11 @@ class LinearApproximation extends Shape {
         y0 = this.point[1];
         while (x0 > viz.minX) {
             x1 = x0 - this.xDelta;
-            y1 = y0 - this.xDelta * this.fPrime(x0, y0);
-            
+            y1 = y0 - this.xDelta * this.fPrime([x0, y0]);
+
             viz.drawLine(
-                viz.scaleToCanvas(x0, y0), 
-                viz.scaleToCanvas(x1, y1), 
+                viz.scaleToCanvas([x0, y0]), 
+                viz.scaleToCanvas([x1, y1])
             );
 
             x0 = x1;
@@ -61,3 +63,5 @@ class LinearApproximation extends Shape {
         }
     }
 }
+
+module.exports = LinearApproximation;
