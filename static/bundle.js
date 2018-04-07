@@ -38,9 +38,12 @@ const Shape = require("./Shape.js");
 // at the given point [x0, y0], then moving to [x0 + xDelta, y0 + F'(x0, y0)] where xDelta
 // is a small number.
 //
+// The approximation will NOT identify singular points,
+//
 // This implementation is sensitive to the choice of xDelta. When xDelta is too large, this
 // approximation will be wildly inaccurate very quickly because it will "skip" a swath of
 // changes in the first derivative. Consider xDelta = 2 and F'(x,y) = sin(x) for example.
+// 
 // 
 // The current implementation is similar to a first-order Taylor series approximation. We
 // might be able to improve the approximation by using higher-order Taylor series approximations,
@@ -48,6 +51,8 @@ const Shape = require("./Shape.js");
 // derivatives. Sounds like a fun project on its own!
 //
 // TODO: Generalize for all arcs, not just functions.
+// TODO: Figure out how to quantify how accurate the approximation is based on the provided function.
+//       I believe that some "chaotic" functions might diverge extremely quickly, even for small xDelta. 
 class DeadReckoningApproximation extends Shape {
     constructor() {
         super();

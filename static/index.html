@@ -11,6 +11,14 @@
             flex-direction: row;
             flex-wrap: wrap-reverse;
         }
+
+        #container {
+            margin-right: 20px;
+        }
+
+        #controls {
+            max-width: 400px;
+        }
     </style>
 </head>
 
@@ -20,11 +28,19 @@
         <div id="controls">
             <div>F'(x,y)=<input id="FPrime" type="text" value="Math.sin(x) + y"/></div>
             <div><button onClick="handleGraphButtonClick()">Graph it!</button></div>
+            <div>
+                <p>This is a toy direction field viewer based on Lesson 5 
+                    of <b>Ordinary Differential Equations</b> by Tenenbaum and Pollard.</p> 
+                <p>Differential equations must be written as valid Javascript.</p>
+                <p>Hover over the graph to view an integral curve.</p>
+                <p><a href="https://davidmis.com/TODO">Here is a blog post with more info about this toy.</a></p>
+            </div>
         </div>
     </div>
 </body>
 
 <script>
+    // Grab the current value of the "FPRime" input box.
     function getFPrime() {
         var fprimeStr = document.getElementById("FPrime").value;
         var functionStr = "(pt) => { let x = pt[0], y = pt[1]; return (" + fprimeStr + "); }";
@@ -32,9 +48,11 @@
     }
     var fPrime = getFPrime();
 
+    // Set up th viz
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
 
+    // Draw an integral curve approximation when the cursor is hovering over the graph. 
     var la;
     viz.setOnMousemove(function(pt) {
         if (la != null) {
@@ -55,6 +73,7 @@
         }
     });
     
+    // Draw a new direction field when the "Graph it!" button is clicked.
     function handleGraphButtonClick() {
         viz.reset();
 
@@ -80,27 +99,6 @@
 
     // initialize
     handleGraphButtonClick();
-
-    // var FPrime = (x, y) => x + y
-    // var FPrime = (x, y) => 2 * (y - 1) / x
-    // var FPrime = (x, y) => 2 * x; 
-    // var FPrime = (x, y) => 2 * y / x; 
-    // var FPrime = (x, y) => (x - y) / (x + y);
-    // Math.sin(x * y)
-
-    // TODO
-    // Showing integral curve
-    // Showing isoclines?
-    // Calculating singular points
-    // Show integral curve when hovering over
-    //   - How accurate can this be? How quickly can the approximation diverge from the true value?
-    //          - Arbitrarily quickly. True value could approach exact opposite direction of approximation), although this
-    //            this behavior will be limited by the number of non-zero derivatives (could we generate a function that
-    //            "runs away" from its linear approximation?
-    //   - What do we use to measure the "flatness" of a function?
-    //          - In some sense, the number of non-zero derivatives will be a good measure
-    //   - We can improve this approximation using Taylor series in the future, but this will probably require
-    //     developing a symbolic computation system to compute derivatives.
 </script>
 
 </html>
