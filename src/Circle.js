@@ -1,5 +1,7 @@
-class Circle {
+class Circle extends Shape {
     constructor() {
+        super();
+
         this.center = [0, 0];
         this.radius = 0;
     }
@@ -15,6 +17,8 @@ class Circle {
     }
 
     draw(viz) {
+        viz.setColor(this.color);
+
         viz.drawCircle(
             viz.scaleToCanvas.apply(viz, this.center), 
             this.radius, 

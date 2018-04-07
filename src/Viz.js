@@ -61,6 +61,8 @@ class Viz {
     }
 
     drawAxes() {
+        this.setColor("black");
+
         var ctx = this.node.getContext("2d");
         
         // Draw X axis
@@ -87,6 +89,12 @@ class Viz {
         ctx.beginPath();
         ctx.arc(pt[0], pt[1], r, 0, 2 * Math.PI);
         ctx.stroke();
+    }
+
+    setColor(color) {
+        var ctx = this.node.getContext("2d");
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
     }
 
     // takes an x, y in the graph space and returns [x, y] in the canvas's space

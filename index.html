@@ -4,8 +4,10 @@
 <head>
     <title>Direction Field Example</title>
     <script src="src/Viz.js"></script>
+    <script src="src/Shape.js"></script>
     <script src="src/LineSegment.js"></script>
     <script src="src/Circle.js"></script>
+    <script src="src/LinearApproximation.js"></script>
 
     <style>
         .parent {
@@ -20,32 +22,38 @@
     <div class="parent">
         <div id="container" style="width: 400px; height: 400px"></div>
         <div id="controls">
-            <div>F'(x,y)=<input id="FPrime" type="text" value="(x - y) / (x + y)"/></div>
+            <div>F'(x,y)=<input id="FPrime" type="text" value="Math.sin(x) + y*x/20"/></div>
             <div><button onClick="handleGraphButtonClick()">Graph it!</button></div>
         </div>
     </div>
 </body>
 
 <script>
+    function getFPrime() {
+        var fprimeStr = document.getElementById("FPrime").value;
+        return eval("(x,y) => " + fprimeStr);
+    }
+    var fPrime = getFPrime();
+
     var viz = new Viz(document.getElementById("container"), 400, 400);
     viz.shouldDrawAxes = true;
 
-    var c;
+    var la;
     viz.setOnMousemove(function(x, y) {
-        if (c != null) {
-            viz.removeShape(c);
+        if (la != null) {
+            viz.removeShape(la);
         }
 
-        c = new Circle()
-            .withCenter([x, y])
-            .withRadius(10);
-        viz.addShape(c);
+        la = new LinearApproximation()
+            .withColor("red")
+            .withPoint([x, y])
+            .withFPrime(fPrime);
+        viz.addShape(la);
         viz.refresh();
     });
     viz.setOnMouseleave(function() {
-        console.log("leave!");
-        if (c != null) {
-            viz.removeShape(c);
+        if (la != null) {
+            viz.removeShape(la);
             viz.refresh();
         }
     });
@@ -53,12 +61,11 @@
     function handleGraphButtonClick() {
         viz.reset();
 
-        let fprimeStr = document.getElementById("FPrime").value;
-        let fprime = eval("(x,y) => " + fprimeStr);
+        fPrime = getFPrime();
 
         for (let x = Math.floor(viz.minX); x < viz.maxX; x++) {
             for(let y = Math.floor(viz.minY); y < viz.maxY; y++) {
-                var slope = fprime(x,y)
+                var slope = fPrime(x,y)
                 
                 // Don't graph when the derivative is not defined 
                 if (isFinite(slope)) {
@@ -82,12 +89,21 @@
     // var FPrime = (x, y) => 2 * x; 
     // var FPrime = (x, y) => 2 * y / x; 
     // var FPrime = (x, y) => (x - y) / (x + y);
+    // Math.sin(x * y)
 
     // TODO
     // Showing integral curve
     // Showing isoclines?
     // Calculating singular points
     // Show integral curve when hovering over
+    //   - How accurate can this be? How quickly can the approximation diverge from the true value?
+    //          - Arbitrarily quickly. True value could approach exact opposite direction of approximation), although this
+    //            this behavior will be limited by the number of non-zero derivatives (could we generate a function that
+    //            "runs away" from its linear approximation?
+    //   - What do we use to measure the "flatness" of a function?
+    //          - In some sense, the number of non-zero derivatives will be a good measure
+    //   - We can improve this approximation using Taylor series in the future, but this will probably require
+    //     developing a symbolic computation system to compute derivatives.
 </script>
 
 </html>

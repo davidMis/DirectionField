@@ -1,5 +1,7 @@
-class LineSegment {
+class LineSegment extends Shape {
     constructor() {
+        super();
+
         this.point = [0, 0];
         this.theta = 0;
         this.length = 0;
@@ -50,6 +52,8 @@ class LineSegment {
     }
 
     draw(viz) {
+        viz.setColor(this.color);
+        
         let endpoints = this.endpoints();
         viz.drawLine(
             viz.scaleToCanvas.apply(viz, endpoints[0]), 
