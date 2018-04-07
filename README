@@ -1,0 +1,8 @@
+This is a toy direction field viewer based on Lesson 5 of 
+"Ordinary Differential Equations" by Tenenbaum and Pollard.
+
+## What can I use it for?
+
+Probably nothing. It's just for fun. 
+
+If you are looking for a in-browser graphing tool, try "D3.js".
