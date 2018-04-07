@@ -1,13 +1,17 @@
+## What is this?
+
 This is a toy direction field viewer based on Lesson 5 of 
 "Ordinary Differential Equations" by Tenenbaum and Pollard.
 
 You can play around with it here: https://davidmis.github.io/DirectionField/
 
+You can read more about it in [this blog post](https://davimis.com/TODO).
+
 ## What can I use it for?
 
-Probably nothing. It's just for fun. 
+Playing with differential equations! Other than that -- probably nothing. It's just for fun. 
 
-If you are looking for a in-browser graphing tool, try "D3.js".
+If you are looking for a general-purpose in-browser graphing tool, try D3.js.
 
 If you are looking for general-purpose mathematical computation languages, start
 with Python or R. You probably don't want to use Javascript for any serious work
