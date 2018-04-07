@@ -1,5 +1,10 @@
 const Shape = require("./Shape.js");
 
+// LineSegment is a shape that can be added to a viz.  It is defined in terms
+// of a point, a length, and a theta. The point can define the center, start,
+// or end of the segment. We use an angle theta instead of a slope so we can
+// draw vertical lines, but a "withSlope()" function that will automatically
+// convert to a theta is provided for convenience. 
 class LineSegment extends Shape {
     constructor() {
         super();
@@ -32,7 +37,6 @@ class LineSegment extends Shape {
     }
 
     // returns endpoints [[x1,y1], [x2,y2]] in the graph's space
-    // TODO: Is it cleaner to make this polymorphic?
     endpoints() {
         if (isNaN(this.theta)) {
             console.log("NaN for " + this.point);

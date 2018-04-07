@@ -33,80 +33,22 @@ module.exports = Circle;
 },{"./Shape.js":4}],2:[function(require,module,exports){
 const Shape = require("./Shape.js");
 
-class LineSegment extends Shape {
-    constructor() {
-        super();
-
-        this.point = [0, 0];
-        this.theta = 0;
-        this.length = 0;
-        this.pointDefines = "start"; 
-    }
-
-    withCenter(point) {
-        this.pointDefines = "center";
-        this.point = point;
-        return this;
-    }
-
-    withSlope(m) {
-        this.theta = LineSegment.thetaFromSlope(m);
-        return this;
-    }
-
-    withTheta(theta) {
-        this.theta = theta;
-        return this;
-    }
-
-    withLength(length) {
-        this.length = length;
-        return this;
-    }
-
-    // returns endpoints [[x1,y1], [x2,y2]] in the graph's space
-    // TODO: Is it cleaner to make this polymorphic?
-    endpoints() {
-        if (isNaN(this.theta)) {
-            console.log("NaN for " + this.point);
-        }
-
-        if (this.pointDefines == "start") {
-            throw new Error("UNIMPLEMENTED");
-        } else if (this.pointDefines == "center") {
-            var r = this.length / 2;
-            return [
-                [this.point[0] + Math.cos(this.theta) * -r, this.point[1] + Math.sin(this.theta) * -r],
-                [this.point[0] + Math.cos(this.theta) * r, this.point[1] + Math.sin(this.theta) * r]
-            ];
-        } else if (this.pointDefines == "end") {
-            throw new Error("UNIMPLEMENTED");
-        } else {
-            throw new Error("UNIMPLEMENTED");
-        }
-    }
-
-    draw(viz) {
-        viz.setColor(this.color);
-
-        let endpoints = this.endpoints();
-        viz.drawLine(
-            viz.scaleToCanvas(endpoints[0]), 
-            viz.scaleToCanvas(endpoints[1])
-        );
-    }
-}
-
-// converts the slope given to an appropriate theta
-LineSegment.thetaFromSlope = function(m) {
-    return Math.atan(m);
-}
-
-module.exports = LineSegment;
-},{"./Shape.js":4}],3:[function(require,module,exports){
-const Shape = require("./Shape.js");
-
-class LinearApproximation extends Shape {
+// A DeadReackoningApproximation is an arc defined by a point and a function that
+// gives the instantaneous rate-of-change at every point. The arc is built by starting
+// at the given point [x0, y0], then moving to [x0 + xDelta, y0 + F'(x0, y0)] where xDelta
+// is a small number.
+//
+// This implementation is sensitive to the choice of xDelta. When xDelta is too large, this
+// approximation will be wildly inaccurate very quickly because it will "skip" a swath of
+// changes in the first derivative. Consider xDelta = 2 and F'(x,y) = sin(x) for example.
+// 
+// The current implementation is similar to a first-order Taylor series approximation. We
+// might be able to improve the approximation by using higher-order Taylor series approximations,
+// but that will require building a symbolix-computation library that is capable of manipulating
+// derivatives. Sounds like a fun project on its own!
+//
+// TODO: Generalize for all arcs, not just functions.
+class DeadReckoningApproximation extends Shape {
     constructor() {
         super();
 
@@ -170,8 +112,88 @@ class LinearApproximation extends Shape {
     }
 }
 
-module.exports = LinearApproximation;
+module.exports = DeadReckoningApproximation;
+},{"./Shape.js":4}],3:[function(require,module,exports){
+const Shape = require("./Shape.js");
+
+// LineSegment is a shape that can be added to a viz.  It is defined in terms
+// of a point, a length, and a theta. The point can define the center, start,
+// or end of the segment. We use an angle theta instead of a slope so we can
+// draw vertical lines, but a "withSlope()" function that will automatically
+// convert to a theta is provided for convenience. 
+class LineSegment extends Shape {
+    constructor() {
+        super();
+
+        this.point = [0, 0];
+        this.theta = 0;
+        this.length = 0;
+        this.pointDefines = "start"; 
+    }
+
+    withCenter(point) {
+        this.pointDefines = "center";
+        this.point = point;
+        return this;
+    }
+
+    withSlope(m) {
+        this.theta = LineSegment.thetaFromSlope(m);
+        return this;
+    }
+
+    withTheta(theta) {
+        this.theta = theta;
+        return this;
+    }
+
+    withLength(length) {
+        this.length = length;
+        return this;
+    }
+
+    // returns endpoints [[x1,y1], [x2,y2]] in the graph's space
+    endpoints() {
+        if (isNaN(this.theta)) {
+            console.log("NaN for " + this.point);
+        }
+
+        if (this.pointDefines == "start") {
+            throw new Error("UNIMPLEMENTED");
+        } else if (this.pointDefines == "center") {
+            var r = this.length / 2;
+            return [
+                [this.point[0] + Math.cos(this.theta) * -r, this.point[1] + Math.sin(this.theta) * -r],
+                [this.point[0] + Math.cos(this.theta) * r, this.point[1] + Math.sin(this.theta) * r]
+            ];
+        } else if (this.pointDefines == "end") {
+            throw new Error("UNIMPLEMENTED");
+        } else {
+            throw new Error("UNIMPLEMENTED");
+        }
+    }
+
+    draw(viz) {
+        viz.setColor(this.color);
+
+        let endpoints = this.endpoints();
+        viz.drawLine(
+            viz.scaleToCanvas(endpoints[0]), 
+            viz.scaleToCanvas(endpoints[1])
+        );
+    }
+}
+
+// converts the slope given to an appropriate theta
+LineSegment.thetaFromSlope = function(m) {
+    return Math.atan(m);
+}
+
+module.exports = LineSegment;
 },{"./Shape.js":4}],4:[function(require,module,exports){
+// Shape is the parent class of all shapes that can be added to a Viz.
+// Subclasses should implement a "draw(viz)" method to draw themselves 
+// in the provided viz.
 class Shape {
     constructor() {
         this.color = "black";
@@ -181,10 +203,18 @@ class Shape {
         this.color = color;
         return this;
     }
+
+    // Subclasses should override this method.
+    draw(viz) {
+        throw new Error("draw() method unimplemented for Shape subclass");
+    } 
 }
 
 module.exports = Shape;
 },{}],5:[function(require,module,exports){
+// Viz is a top-level visualization. 
+// It can contain Shapes to draw, has methods to interact with the canvas, and can 
+// translate between the graph and canvas's coordinate systems. 
 class Viz {
     constructor(parent, width, height) {
         if (parent == null || parent.nodeType == null) {
@@ -225,10 +255,12 @@ class Viz {
         this.shapes = this.shapes.filter(e => e != s);
     }
 
+    // Remove all shapes
     reset() {
         this.shapes = [];
     }
 
+    // Redraw the Viz
     refresh() {
         this.clear();
 
@@ -236,7 +268,6 @@ class Viz {
             this.drawAxes();
         }
 
-        // Draw shapes
         for (let s of this.shapes) {
             s.draw(this);
         }
@@ -265,7 +296,7 @@ class Viz {
         );
     }
 
-    // draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space
+    // Draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space.
     drawLine(pt1, pt2) {
         var ctx = this.node.getContext("2d");
 
@@ -275,7 +306,7 @@ class Viz {
         ctx.stroke();
     }
 
-    // draws a circle centered at [x, y] w/ radius r. Coordinates are in the canvas space.
+    // Draws a circle centered at [x, y] w/ radius r. Coordinates are in the canvas space.
     drawCircle(pt, r) {
         var ctx = this.node.getContext("2d");
 
@@ -290,7 +321,7 @@ class Viz {
         ctx.fillStyle = color;
     }
 
-    // takes an [x, y] in the graph space and returns [x, y] in the canvas's space
+    // Takes an [x, y] in the graph space and returns [x, y] in the canvas's space
     scaleToCanvas(pt) {
         const x = pt[0]
         const y = pt[1];
@@ -301,7 +332,7 @@ class Viz {
         ];
     }
 
-    // takes an [x, y] in the canvas space and returns [x, y] in the graph space
+    // Takes an [x, y] in the canvas space and returns [x, y] in the graph space
     scaleToGraph(pt) {
         const x = pt[0]
         const y = pt[1];
@@ -326,8 +357,8 @@ class Viz {
 module.exports = Viz;
 },{}],6:[function(require,module,exports){
 Circle = require("./Circle.js");
-LinearApproximation = require("./LinearApproximation.js");
+DeadReckoningApproximation = require("./DeadReckoningApproximation.js");
 LineSegment = require("./LineSegment.js");
 Shape = require("./Shape.js");
 Viz = require("./Viz.js");
-},{"./Circle.js":1,"./LineSegment.js":2,"./LinearApproximation.js":3,"./Shape.js":4,"./Viz.js":5}]},{},[6]);
+},{"./Circle.js":1,"./DeadReckoningApproximation.js":2,"./LineSegment.js":3,"./Shape.js":4,"./Viz.js":5}]},{},[6]);

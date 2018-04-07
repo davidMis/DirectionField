@@ -1,3 +1,6 @@
+// Viz is a top-level visualization. 
+// It can contain Shapes to draw, has methods to interact with the canvas, and can 
+// translate between the graph and canvas's coordinate systems. 
 class Viz {
     constructor(parent, width, height) {
         if (parent == null || parent.nodeType == null) {
@@ -38,10 +41,12 @@ class Viz {
         this.shapes = this.shapes.filter(e => e != s);
     }
 
+    // Remove all shapes
     reset() {
         this.shapes = [];
     }
 
+    // Redraw the Viz
     refresh() {
         this.clear();
 
@@ -49,7 +54,6 @@ class Viz {
             this.drawAxes();
         }
 
-        // Draw shapes
         for (let s of this.shapes) {
             s.draw(this);
         }
@@ -78,7 +82,7 @@ class Viz {
         );
     }
 
-    // draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space
+    // Draws a line from [x1, y1] to [x2, y2]. Coordinates are in the canvas space.
     drawLine(pt1, pt2) {
         var ctx = this.node.getContext("2d");
 
@@ -88,7 +92,7 @@ class Viz {
         ctx.stroke();
     }
 
-    // draws a circle centered at [x, y] w/ radius r. Coordinates are in the canvas space.
+    // Draws a circle centered at [x, y] w/ radius r. Coordinates are in the canvas space.
     drawCircle(pt, r) {
         var ctx = this.node.getContext("2d");
 
@@ -103,7 +107,7 @@ class Viz {
         ctx.fillStyle = color;
     }
 
-    // takes an [x, y] in the graph space and returns [x, y] in the canvas's space
+    // Takes an [x, y] in the graph space and returns [x, y] in the canvas's space
     scaleToCanvas(pt) {
         const x = pt[0]
         const y = pt[1];
@@ -114,7 +118,7 @@ class Viz {
         ];
     }
 
-    // takes an [x, y] in the canvas space and returns [x, y] in the graph space
+    // Takes an [x, y] in the canvas space and returns [x, y] in the graph space
     scaleToGraph(pt) {
         const x = pt[0]
         const y = pt[1];

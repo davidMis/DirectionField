@@ -1,6 +1,21 @@
 const Shape = require("./Shape.js");
 
-class LinearApproximation extends Shape {
+// A DeadReackoningApproximation is an arc defined by a point and a function that
+// gives the instantaneous rate-of-change at every point. The arc is built by starting
+// at the given point [x0, y0], then moving to [x0 + xDelta, y0 + F'(x0, y0)] where xDelta
+// is a small number.
+//
+// This implementation is sensitive to the choice of xDelta. When xDelta is too large, this
+// approximation will be wildly inaccurate very quickly because it will "skip" a swath of
+// changes in the first derivative. Consider xDelta = 2 and F'(x,y) = sin(x) for example.
+// 
+// The current implementation is similar to a first-order Taylor series approximation. We
+// might be able to improve the approximation by using higher-order Taylor series approximations,
+// but that will require building a symbolix-computation library that is capable of manipulating
+// derivatives. Sounds like a fun project on its own!
+//
+// TODO: Generalize for all arcs, not just functions.
+class DeadReckoningApproximation extends Shape {
     constructor() {
         super();
 
@@ -64,4 +79,4 @@ class LinearApproximation extends Shape {
     }
 }
 
-module.exports = LinearApproximation;
+module.exports = DeadReckoningApproximation;
